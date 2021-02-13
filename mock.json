@@ -1,0 +1,48 @@
+{
+    "subjects": [
+        {
+            "id": 1,
+            "title": "欧洲攻略",
+            "genres": "喜剧 动作 爱情",
+            "rating": 3.8,
+            "theater": 1
+        },
+        {
+            "id": 2,
+            "title": "复仇者联盟2",
+            "genres": "科幻 动作",
+            "rating": 7.3,
+            "theater": 2
+        }
+    ],
+    "theater": [
+        {
+            "id": 1,
+            "name": "CGV影城"
+        },
+        {
+            "id": 2,
+            "name": "万达影城"
+        }
+    ],
+    "comments": [
+        {
+            "id": 1,
+            "subjects": 1,
+            "theater": 1,
+            "content": "电影不错，但是影院太垃圾了"
+        },
+        {
+            "id": 2,
+            "subjects": 2,
+            "theater": 2,
+            "content": "满分好评！"
+        },
+        {
+            "id": 3,
+            "subjects": 2,
+            "theater": 1,
+            "content": "满分好评!!！"
+        }
+    ]
+}
