@@ -2,7 +2,7 @@
  * @author: xiejiaxin
  * @Date: 2021-02-13 11:46:09
  * @LastEditors: xiejiaxin
- * @LastEditTime: 2021-02-13 20:15:46
+ * @LastEditTime: 2021-02-14 16:47:36
  * @description: file content
  */
 import {
@@ -12,7 +12,8 @@ import {
     GraphQLString,
     GraphQLList,
     GraphQLInt,
-    GraphQLFloat
+    GraphQLFloat,
+    GraphQLNonNull
 } from 'graphql';
 
 import axios from 'axios';
@@ -90,9 +91,20 @@ let MovieType = new GraphQLObjectType({
             }
         }
     }
-})
+});
+
+// 定义信息返回对象
+let MessageType = new GraphQLObjectType({
+    name: 'MessageType',
+    fields: {
+        message: {
+            type: GraphQLString
+        }
+    }
+});
 
 var schema = new GraphQLSchema({
+    // 查询
     query: new GraphQLObjectType({
         name: 'RootQueryType',
         fields: {
@@ -116,6 +128,102 @@ var schema = new GraphQLSchema({
             }
         },
     }),
+    mutation: new GraphQLObjectType({
+        name: 'RootMutationType',
+        fields: {
+            // 添加
+            insert: {
+                type: MovieType,
+                args: {
+                    title: {
+                        type: new GraphQLNonNull(GraphQLString)
+                    },
+                    genres: {
+                        type: GraphQLString
+                    },
+                    rating: {
+                        type: GraphQLFloat
+                    },
+                    theater: {
+                        type: GraphQLInt
+                    }
+                },
+                resolve(obj, args) {
+                    return axios.post('http://localhost:3400/subjects', { ...args }).then(res => {
+                        return res.data;
+                    })
+                }
+            },
+            // 修改
+            put: {
+                type: MovieType,
+                args: {
+                    id: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                    title: {
+                        type: GraphQLString
+                    },
+                    genres: {
+                        type: GraphQLString
+                    },
+                    rating: {
+                        type: GraphQLFloat
+                    },
+                    theater: {
+                        type: GraphQLInt
+                    }
+                },
+                resolve(obj, args) {
+                    return axios.put('http://localhost:3400/subjects/' + args.id, { ...args }).then(res => {
+                        return res.data;
+                    })
+                }
+            },
+            patch: {
+                type: MovieType,
+                args: {
+                    id: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    },
+                    title: {
+                        type: GraphQLString
+                    },
+                    genres: {
+                        type: GraphQLString
+                    },
+                    rating: {
+                        type: GraphQLFloat
+                    },
+                    theater: {
+                        type: GraphQLInt
+                    }
+                },
+                resolve(obj, args) {
+                    return axios.patch('http://localhost:3400/subjects/' + args.id, { ...args }).then(res => {
+                        return res.data;
+                    })
+                }
+            },
+            // 删除
+            delete: {
+                type: MessageType,
+                args: {
+                    id: {
+                        type: new GraphQLNonNull(GraphQLInt)
+                    }
+                },
+                resolve(obj, args) {
+                    return axios.delete('http://localhost:3400/subjects/' + args.id).
+                    then(res => {
+                        return {
+                            message: '数据修改成功'
+                        };
+                    })
+                }
+            }
+        }
+    })
 });
 
 export default schema;
