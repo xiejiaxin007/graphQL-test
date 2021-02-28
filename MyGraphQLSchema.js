@@ -2,7 +2,7 @@
  * @author: xiejiaxin
  * @Date: 2021-02-13 11:46:09
  * @LastEditors: xiejiaxin
- * @LastEditTime: 2021-02-13 17:33:04
+ * @LastEditTime: 2021-02-22 22:23:41
  * @description: file content
  */
 import {
@@ -59,6 +59,7 @@ var schema = new GraphQLSchema({
                         url: 'http://localhost:3300/subjects'
                     })
                     .then((res) => {
+                        console.log(res.data)
                         return res.data;
                     })
                 }

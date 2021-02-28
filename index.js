@@ -2,7 +2,7 @@
  * @author: xiejiaxin
  * @Date: 2021-02-13 11:45:18
  * @LastEditors: xiejiaxin
- * @LastEditTime: 2021-02-13 16:29:21
+ * @LastEditTime: 2021-02-22 22:17:42
  * @description: file content
  */
 import express from 'express';
@@ -40,5 +40,8 @@ app.get('/api/movies', (req, res) => {
         res.json(result.data.movies);
     })
 });
+app.use((req, res) => {
+    res.send('404');
+})
 
 app.listen(4000);
