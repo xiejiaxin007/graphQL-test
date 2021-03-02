@@ -2,7 +2,7 @@
  * @author: xiejiaxin
  * @Date: 2021-02-13 11:46:09
  * @LastEditors: xiejiaxin
- * @LastEditTime: 2021-02-14 16:47:36
+ * @LastEditTime: 2021-02-22 22:57:04
  * @description: file content
  */
 import {
@@ -41,16 +41,16 @@ let TheaterType = new GraphQLObjectType({
         name: {
             type: GraphQLString
         },
-        comments: {
-            type: new GraphQLList(CommentType),
-            resolve(obj) {
-                return axios({
-                    url: 'http://localhost:3400/comments?theater=' + obj.id 
-                }).then(res => {
-                    return res.data
-                })
-            }
-        }
+        // comments: {
+        //     type: new GraphQLList(CommentType),
+        //     resolve(obj) {
+        //         return axios({
+        //             url: 'http://localhost:3400/comments?theater=' + obj.id 
+        //         }).then(res => {
+        //             return res.data
+        //         })
+        //     }
+        // }
     }
 });
 
@@ -71,25 +71,28 @@ let MovieType = new GraphQLObjectType({
             type: GraphQLFloat
         },
         theater: {
+            // type: TheaterType,
             type: new GraphQLList(TheaterType),
             resolve(obj) {
                 return axios({
-                    url: 'http://localhost:3400/theater?id=' + obj.theater 
+                    url: 'http://192.168.1.6:8001/theater?id=' + obj.theater
+                    // url: 'http://localhost:3400/theater?id=' + obj.theater 
                 }).then(res => {
+                    console.log(res.data)
                     return res.data
                 })
             }
         },
-        comments: {
-            type: new GraphQLList(CommentType),
-            resolve(obj) {
-                return axios({
-                    url: 'http://localhost:3400/comments?subjects=' + obj.id 
-                }).then(res => {
-                    return res.data
-                })
-            }
-        }
+        // comments: {
+        //     type: new GraphQLList(CommentType),
+        //     resolve(obj) {
+        //         return axios({
+        //             url: 'http://localhost:3400/comments?subjects=' + obj.id 
+        //         }).then(res => {
+        //             return res.data
+        //         })
+        //     }
+        // }
     }
 });
 
@@ -119,10 +122,11 @@ var schema = new GraphQLSchema({
                 resolve() {
                     // 提前启动yarn json-server，启动json生成的api接口
                     return axios({
-                        url: 'http://localhost:3400/subjects'
+                        // url: 'http://localhost:3400/subjects'
+                        url: 'http://192.168.1.6:8001/subjects'
                     })
                     .then((res) => {
-                        return res.data;
+                        return res.data.subjects;
                     })
                 }
             }
