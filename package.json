@@ -14,7 +14,7 @@
     "graphql": "^15.5.0"
   },
   "scripts": {
-    "web": "nodemon webapp.js --exec babel-node --presets @babel/preset-env",
+    "web": "nodemon webApi/propertySide.js --exec babel-node --presets @babel/preset-env",
     "dev": "nodemon index.js --exec babel-node --presets @babel/preset-env",
     "json-server": "json-server --watch db.json --port 3300",
     "json-server-mock": "json-server --watch mock.json --port 3400",
