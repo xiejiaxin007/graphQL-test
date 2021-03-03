@@ -2,7 +2,7 @@
  * @author: xiejiaxin
  * @Date: 2021-03-03 16:58:34
  * @LastEditors: xiejiaxin
- * @LastEditTime: 2021-03-03 18:11:48
+ * @LastEditTime: 2021-03-03 23:30:41
  * @description: 尝试楼盘侧接口聚合
  */
 let express = require('express');
@@ -10,7 +10,10 @@ const app = express();
 import axios from 'axios';
 import {
     graphqlHTTP
-  } from 'express-graphql';
+} from 'express-graphql';
+import {
+    graphql
+} from 'graphql';
 import GraphQLSchema from './GraphQLSchema';
 
 app.use(
@@ -69,6 +72,22 @@ app.get('/web', async (req, res) => {
     await switchRole(req);
     let info = await getHouseInfo(req);
     res.json(info.data);
+});
+app.get('/test-graphql', (req, res) => {
+    const query = `{
+      tags {
+        checked,
+        type_id,
+        type_name,
+        chosen {
+          id,
+          name
+        }
+      }
+    }`
+    graphql(GraphQLSchema, query).then(result => {
+        res.json(result.data.tags);
+    })
 });
 // 匹配默认路径
 app.get('/', (req, res) => {

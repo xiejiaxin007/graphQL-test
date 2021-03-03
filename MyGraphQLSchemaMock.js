@@ -2,7 +2,7 @@
  * @author: xiejiaxin
  * @Date: 2021-02-13 11:46:09
  * @LastEditors: xiejiaxin
- * @LastEditTime: 2021-02-22 22:57:04
+ * @LastEditTime: 2021-03-03 22:46:12
  * @description: file content
  */
 import {
@@ -105,7 +105,6 @@ let MessageType = new GraphQLObjectType({
         }
     }
 });
-
 var schema = new GraphQLSchema({
     // 查询
     query: new GraphQLObjectType({

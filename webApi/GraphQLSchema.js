@@ -2,7 +2,7 @@
  * @author: xiejiaxin
  * @Date: 2021-03-03 17:22:34
  * @LastEditors: xiejiaxin
- * @LastEditTime: 2021-03-03 18:20:15
+ * @LastEditTime: 2021-03-03 23:26:19
  * @description: 配置schema
  */
 import {
@@ -13,14 +13,94 @@ import {
     GraphQLList,
     GraphQLInt,
     GraphQLFloat,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLBoolean
 } from 'graphql';
 
-import axios from 'axios';
+import axiosApi from 'axios';
+// 设置接口请求域名
+let axios = axiosApi.create({
+    baseURL: 'http://test24backend.comjia.com'
+})
+// 登录cookie保存
+let cookieVal;
 
+// 登录接口
+const loginInfo = () => {
+    return axios.post('/backend-api/api-user/login', {
+        job_number: '25',
+        password: "Julive@666"
+    })
+}
+// 切换身份接口 
+const switchRole = (req) => {
+    return axios.post('/backend-api/common/switch-role', {
+        role_name: 'super_admin'
+    });
+};
+
+// 选中内容
+const ChosenType = new GraphQLObjectType({
+    name: 'ChosenType',
+    fields: {
+        id: {
+            type: GraphQLString
+        },
+        name: {
+            type: GraphQLString
+        }
+    }
+});
 // 标签组数据对象
 const TagGroupType = new GraphQLObjectType({
-    
+    name: 'TagGroupType',
+    fields: {
+        checked: {
+            type: GraphQLBoolean
+        },
+        type_id: {
+            type: GraphQLInt
+        },
+        type_name: {
+            type: GraphQLString
+        },
+        // 默认选种值
+        chosen: {
+            type: ChosenType,
+            async resolve(obj) {
+                let { data } = await axios.get('/backend-api/project/project-profile/get-info', {
+                    params: {
+                        project_id: '200488410'
+                    }
+                });
+                const tagObj = data.data.project_survey_tag_info.data.tag.field_value[obj.type_id];
+                // 判断是多选还是单选
+                if (obj.checked && tagObj) {
+                    // 多选
+                    let idArr = [];
+                    let nameArr = [];
+                    tagObj.values.forEach(item => {
+                        idArr.push(item.value);
+                        nameArr.push(item.name);
+                    });
+                    return {
+                        id: idArr.join(','),
+                        name: nameArr.join('，')
+                    }
+                } else if (!obj.checked && tagObj) {
+                    return {
+                        id: tagObj.values.value,
+                        name: tagObj.values.name
+                    }
+                } else {
+                    return {
+                        id: '',
+                        name: ''
+                    }
+                }
+            }
+        }
+    }
 });
 
 const schema = new GraphQLSchema({
@@ -36,8 +116,14 @@ const schema = new GraphQLSchema({
             },
             tags: {
                 type: new GraphQLList(TagGroupType),
-                resolve() {
-                    return axios.get('http://testbackendapi5.comjia.com/backend-api/project/tags')
+                async resolve() {
+                    let result = await loginInfo();
+                    cookieVal = result.headers['set-cookie'];
+                    // 设置请求cookie
+                    axios.defaults.headers['cookie'] = cookieVal
+                    await switchRole();
+                    let { data } = await axios.get('/backend-api/project/tags');
+                    return data.data;
                 }
             }
         }
@@ -45,4 +131,3 @@ const schema = new GraphQLSchema({
 });
 
 export default schema;
-
